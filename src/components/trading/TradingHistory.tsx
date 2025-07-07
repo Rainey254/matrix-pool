@@ -1,0 +1,243 @@
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { History } from "lucide-react";
+
+interface TradingHistoryProps {
+  onClose: () => void;
+}
+
+const TradingHistory = ({ onClose }: TradingHistoryProps) => {
+  const [tradeHistory] = useState([
+    {
+      id: "1",
+      instrument: "Volatility 75",
+      type: "UP",
+      amount: 25,
+      multiplier: 100,
+      payout: 25,
+      result: "win",
+      timestamp: "2025-01-06 14:30:15",
+      duration: "2m 15s"
+    },
+    {
+      id: "2",
+      instrument: "Boom 1000",
+      type: "DOWN",
+      amount: 50,
+      multiplier: 250,
+      payout: -50,
+      result: "loss",
+      timestamp: "2025-01-06 14:25:42",
+      duration: "1m 45s"
+    },
+    {
+      id: "3",
+      instrument: "Crash 500",
+      type: "UP",
+      amount: 10,
+      multiplier: 500,
+      payout: 50,
+      result: "win",
+      timestamp: "2025-01-06 14:20:18",
+      duration: "3m 12s"
+    },
+    {
+      id: "4",
+      instrument: "Volatility 25",
+      type: "DOWN",
+      amount: 75,
+      multiplier: 150,
+      payout: -75,
+      result: "loss",
+      timestamp: "2025-01-06 14:15:33",
+      duration: "2m 8s"
+    },
+    {
+      id: "5",
+      instrument: "Step Index",
+      type: "UP",
+      amount: 30,
+      multiplier: 200,
+      payout: 60,
+      result: "win",
+      timestamp: "2025-01-06 14:10:55",
+      duration: "4m 22s"
+    }
+  ]);
+
+  const [transactionHistory] = useState([
+    {
+      id: "1",
+      type: "deposit",
+      method: "Bitcoin",
+      amount: 500,
+      status: "completed",
+      timestamp: "2025-01-06 12:00:00"
+    },
+    {
+      id: "2",
+      type: "withdraw",
+      method: "Ethereum",
+      amount: 200,
+      status: "pending",
+      timestamp: "2025-01-06 11:30:00"
+    },
+    {
+      id: "3",
+      type: "deposit",
+      method: "M-Pesa",
+      amount: 100,
+      status: "completed",
+      timestamp: "2025-01-06 10:15:00"
+    }
+  ]);
+
+  const totalPnL = tradeHistory.reduce((sum, trade) => sum + trade.payout, 0);
+  const winRate = (tradeHistory.filter(trade => trade.result === "win").length / tradeHistory.length) * 100;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+          <History className="h-6 w-6" />
+          Trading History
+        </h2>
+        <Button variant="ghost" onClick={onClose} className="text-gray-400">
+          ✕
+        </Button>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-3 gap-4">
+        <Card className="bg-slate-800 border-slate-700">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <p className="text-sm text-gray-400">Total P&L</p>
+              <p className={`text-xl font-bold ${totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                ${totalPnL > 0 ? '+' : ''}${totalPnL}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-slate-800 border-slate-700">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <p className="text-sm text-gray-400">Win Rate</p>
+              <p className="text-xl font-bold text-blue-400">{winRate.toFixed(1)}%</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-slate-800 border-slate-700">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <p className="text-sm text-gray-400">Total Trades</p>
+              <p className="text-xl font-bold text-white">{tradeHistory.length}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="trades" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-slate-700">
+          <TabsTrigger value="trades" className="text-white">Trade History</TabsTrigger>
+          <TabsTrigger value="transactions" className="text-white">Transactions</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="trades">
+          <Card className="bg-slate-800 border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-white">Recent Trades</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-gray-400">Instrument</TableHead>
+                    <TableHead className="text-gray-400">Type</TableHead>
+                    <TableHead className="text-gray-400">Amount</TableHead>
+                    <TableHead className="text-gray-400">Multiplier</TableHead>
+                    <TableHead className="text-gray-400">P&L</TableHead>
+                    <TableHead className="text-gray-400">Result</TableHead>
+                    <TableHead className="text-gray-400">Time</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tradeHistory.map((trade) => (
+                    <TableRow key={trade.id}>
+                      <TableCell className="text-white">{trade.instrument}</TableCell>
+                      <TableCell>
+                        <Badge className={trade.type === 'UP' ? 'bg-green-600' : 'bg-red-600'}>
+                          {trade.type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-white">${trade.amount}</TableCell>
+                      <TableCell className="text-white">x{trade.multiplier}</TableCell>
+                      <TableCell className={trade.payout >= 0 ? 'text-green-400' : 'text-red-400'}>
+                        ${trade.payout > 0 ? '+' : ''}{trade.payout}
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={trade.result === 'win' ? 'bg-green-600' : 'bg-red-600'}>
+                          {trade.result.toUpperCase()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-400 text-sm">{trade.timestamp}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="transactions">
+          <Card className="bg-slate-800 border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-white">Transaction History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-gray-400">Type</TableHead>
+                    <TableHead className="text-gray-400">Method</TableHead>
+                    <TableHead className="text-gray-400">Amount</TableHead>
+                    <TableHead className="text-gray-400">Status</TableHead>
+                    <TableHead className="text-gray-400">Time</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {transactionHistory.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell>
+                        <Badge className={transaction.type === 'deposit' ? 'bg-green-600' : 'bg-blue-600'}>
+                          {transaction.type.toUpperCase()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-white">{transaction.method}</TableCell>
+                      <TableCell className="text-white">${transaction.amount}</TableCell>
+                      <TableCell>
+                        <Badge className={transaction.status === 'completed' ? 'bg-green-600' : 'bg-yellow-600'}>
+                          {transaction.status.toUpperCase()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-400 text-sm">{transaction.timestamp}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
+export default TradingHistory;
