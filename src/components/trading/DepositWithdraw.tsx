@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { Wallet, Smartphone, Copy } from "lucide-react";
+import { playMT5NotificationSound } from "@/utils/soundUtils";
 
 interface DepositWithdrawProps {
   balance: number;
@@ -126,10 +127,29 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
 
     setIsProcessing(true);
     
-    // Use the parent component's M-Pesa deposit handler for delayed processing
-    if (onMpesaDeposit) {
-      onMpesaDeposit(amount);
-    }
+    // Show initial confirmation
+    toast({
+      title: "M-Pesa Payment Received",
+      description: `Processing deposit of $${amount}. Your balance will be updated in 3 minutes.`,
+      duration: 5000,
+    });
+
+    // Set up 3-minute delay with sound notification
+    setTimeout(() => {
+      // Play MT5 notification sound
+      playMT5NotificationSound();
+      
+      // Update balance
+      const newBalance = balance + amount;
+      onBalanceChange(newBalance);
+      
+      // Show success notification
+      toast({
+        title: "Deposit Successful! 🎉",
+        description: `$${amount} has been added to your account. New balance: $${newBalance.toLocaleString()}`,
+        duration: 8000,
+      });
+    }, 3 * 60 * 1000); // 3 minutes
     
     setDepositAmount("");
     setTransactionCode("");
