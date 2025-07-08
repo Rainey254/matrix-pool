@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
+import { playMineClickSound } from "@/utils/soundUtils";
 
 interface TradingInterfaceProps {
   balance: number;
@@ -31,6 +32,9 @@ const TradingInterface = ({ balance, onBalanceChange, accountType, selectedInstr
       });
       return;
     }
+
+    // Play mine click sound immediately when button is clicked
+    playMineClickSound();
 
     setIsMining(true);
     

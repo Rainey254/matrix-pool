@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { Wallet, Smartphone, Copy } from "lucide-react";
-import { playMT5NotificationSound } from "@/utils/soundUtils";
+import { playMT5NotificationSound, playWithdrawalSound } from "@/utils/soundUtils";
 
 interface DepositWithdrawProps {
   balance: number;
@@ -189,6 +189,9 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
     setIsProcessing(true);
     // Simulate successful withdrawal
     setTimeout(() => {
+      // Play withdrawal sound
+      playWithdrawalSound();
+      
       onBalanceChange(balance - amount);
       toast({
         title: "Crypto Withdrawal Successful",
@@ -232,6 +235,9 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
     setIsProcessing(true);
     // Simulate successful M-Pesa withdrawal
     setTimeout(() => {
+      // Play withdrawal sound
+      playWithdrawalSound();
+      
       onBalanceChange(balance - amount);
       toast({
         title: "M-Pesa Withdrawal Initiated",
