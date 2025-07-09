@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
-import { playMineClickSound } from "@/utils/soundUtils";
 
 interface TradingInterfaceProps {
   balance: number;
@@ -32,9 +31,6 @@ const TradingInterface = ({ balance, onBalanceChange, accountType, selectedInstr
       });
       return;
     }
-
-    // Play mine click sound immediately when button is clicked
-    playMineClickSound();
 
     setIsMining(true);
     
@@ -65,7 +61,7 @@ const TradingInterface = ({ balance, onBalanceChange, accountType, selectedInstr
       onTradeComplete(mine);
       
       toast({
-        title: isWin ? "Mine Won! 🎉" : "Mine Lost 😞",
+        title: isWin ? "Mine Profit+ 🎉" : "Mine Lost 😞",
         description: `${isWin ? '+' : ''}$${payout.toFixed(2)}`,
         variant: isWin ? "default" : "destructive",
       });
@@ -77,7 +73,7 @@ const TradingInterface = ({ balance, onBalanceChange, accountType, selectedInstr
   const getInstrumentName = (instrument: string) => {
     const names: { [key: string]: string } = {
       'volatility_75': 'Volatility 75',
-      'volatility_25': 'Volatility 25',
+      'volatility_85': 'Volatility 85',
       'boom_1000': 'Boom 1000',
       'crash_500': 'Crash 500',
       'step_index': 'Step Index',
