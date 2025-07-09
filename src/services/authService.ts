@@ -145,6 +145,22 @@ class AuthService {
     }
   }
 
+  addUserDeposit(email: string, deposit: any): void {
+    const userData = this.getUserData(email);
+    if (userData) {
+      userData.deposits = [deposit, ...userData.deposits];
+      this.saveUserData(email, userData);
+    }
+  }
+
+  addUserWithdrawal(email: string, withdrawal: any): void {
+    const userData = this.getUserData(email);
+    if (userData) {
+      userData.withdrawals = [withdrawal, ...userData.withdrawals];
+      this.saveUserData(email, userData);
+    }
+  }
+
   updateUserAccountType(email: string, accountType: 'demo' | 'real'): void {
     const userData = this.getUserData(email);
     if (userData) {
@@ -175,6 +191,27 @@ class AuthService {
       return users ? JSON.parse(users) : [];
     } catch {
       return [];
+    }
+  }
+
+  deleteUser(email: string): boolean {
+    try {
+      // Remove from users list
+      const users = this.getAllUsers();
+      const updatedUsers = users.filter(user => user.email !== email);
+      localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
+      
+      // Remove user data
+      localStorage.removeItem(this.getUserKey(email, 'data'));
+      
+      // If this is the current user, log them out
+      if (this.getCurrentUser() === email) {
+        this.logoutUser();
+      }
+      
+      return true;
+    } catch {
+      return false;
     }
   }
 
