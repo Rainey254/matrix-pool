@@ -75,9 +75,6 @@ const AdminAuth = ({ onAuthenticated }: AdminAuthProps) => {
               {loading ? 'Authenticating...' : 'Access Admin Panel'}
             </Button>
           </form>
-          <div className="mt-4 text-sm text-muted-foreground text-center">
-            For demo purposes, password is: admin123
-          </div>
         </CardContent>
       </Card>
     </div>
