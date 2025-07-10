@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Trash2, Users, CreditCard, Shield, RefreshCw } from "lucide-react";
+import { Trash2, Users, CreditCard, Shield, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { authService, UserAccount } from "@/services/authService";
 import { toast } from "@/hooks/use-toast";
 
@@ -22,6 +22,7 @@ const AdminPanel = () => {
   const [users, setUsers] = useState<UserAccount[]>([]);
   const [deposits, setDeposits] = useState<DepositRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showPasswords, setShowPasswords] = useState(false);
   
   useEffect(() => {
     loadAllData();
@@ -146,6 +147,13 @@ const AdminPanel = () => {
     return { demo: 0, real: 0, accountType: 'demo' };
   };
 
+  const getTotalRealBalance = () => {
+    return users.reduce((total, user) => {
+      const balance = getUserBalance(user.email);
+      return total + balance.real;
+    }, 0);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background p-6 flex items-center justify-center">
@@ -166,14 +174,24 @@ const AdminPanel = () => {
             <Shield className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold">Admin Panel</h1>
           </div>
-          <Button onClick={loadAllData} variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh Data
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => setShowPasswords(!showPasswords)} 
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              {showPasswords ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPasswords ? 'Hide' : 'Show'} Passwords
+            </Button>
+            <Button onClick={loadAllData} variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh Data
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -205,12 +223,24 @@ const AdminPanel = () => {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Real Balance</CardTitle>
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">
+                ${getTotalRealBalance().toFixed(2)}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Users Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Registered Users ({users.length})</CardTitle>
+            <CardTitle>Registered Users ({users.length}) - Tracked by Email</CardTitle>
           </CardHeader>
           <CardContent>
             {users.length === 0 ? (
@@ -221,7 +251,8 @@ const AdminPanel = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Email</TableHead>
+                    <TableHead>Email (ID)</TableHead>
+                    <TableHead>Password</TableHead>
                     <TableHead>Registration Date</TableHead>
                     <TableHead>Full Name</TableHead>
                     <TableHead>Phone</TableHead>
@@ -237,13 +268,18 @@ const AdminPanel = () => {
                     const balance = getUserBalance(user.email);
                     return (
                       <TableRow key={user.email}>
-                        <TableCell className="font-medium">{user.email}</TableCell>
+                        <TableCell className="font-medium text-blue-600">{user.email}</TableCell>
+                        <TableCell className="font-mono">
+                          {showPasswords ? user.password : '••••••••'}
+                        </TableCell>
                         <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
                         <TableCell>{user.firstName} {user.lastName}</TableCell>
                         <TableCell>{user.phone || 'N/A'}</TableCell>
                         <TableCell>{user.country || 'N/A'}</TableCell>
                         <TableCell>${balance.demo.toFixed(2)}</TableCell>
-                        <TableCell>${balance.real.toFixed(2)}</TableCell>
+                        <TableCell className="font-bold text-green-600">
+                          ${balance.real.toFixed(2)}
+                        </TableCell>
                         <TableCell>
                           <Badge variant={balance.accountType === 'real' ? 'default' : 'secondary'}>
                             {balance.accountType}
@@ -287,7 +323,7 @@ const AdminPanel = () => {
         {/* Deposits Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Deposit History ({deposits.length})</CardTitle>
+            <CardTitle>Deposit History ({deposits.length}) - Tracked by User Email</CardTitle>
           </CardHeader>
           <CardContent>
             {deposits.length === 0 ? (
@@ -298,7 +334,7 @@ const AdminPanel = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>User Email</TableHead>
+                    <TableHead>User Email (ID)</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Transaction Code</TableHead>
                     <TableHead>Date</TableHead>
@@ -309,9 +345,9 @@ const AdminPanel = () => {
                 <TableBody>
                   {deposits.map((deposit) => (
                     <TableRow key={deposit.id}>
-                      <TableCell className="font-medium">{deposit.userEmail}</TableCell>
-                      <TableCell>${deposit.amount.toFixed(2)}</TableCell>
-                      <TableCell>{deposit.transactionCode}</TableCell>
+                      <TableCell className="font-medium text-blue-600">{deposit.userEmail}</TableCell>
+                      <TableCell className="font-bold text-green-600">${deposit.amount.toFixed(2)}</TableCell>
+                      <TableCell className="font-mono">{deposit.transactionCode}</TableCell>
                       <TableCell>{new Date(deposit.date).toLocaleDateString()}</TableCell>
                       <TableCell>
                         <Badge variant={deposit.status === 'approved' ? 'default' : 'secondary'}>
