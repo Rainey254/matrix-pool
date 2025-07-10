@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Users, ChartLine, Smartphone, Settings } from "lucide-react";
 import AuthModal from "@/components/auth/AuthModal";
 import TradingDashboard from "@/components/trading/TradingDashboard";
+import AdminLink from "@/components/navigation/AdminLink";
 import { authService } from "@/services/authService";
 
 const Index = () => {
@@ -43,7 +44,8 @@ const Index = () => {
             <ChartLine className="h-8 w-8 text-purple-400" />
             <span className="text-2xl font-bold text-white">Matrix-pool</span>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
+            <AdminLink />
             <Button variant="ghost" onClick={() => openAuth('login')} className="text-white hover:bg-white/10">
               Login
             </Button>

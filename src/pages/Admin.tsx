@@ -1,5 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import AdminPanel from '@/components/admin/AdminPanel';
 import AdminAuth from '@/components/admin/AdminAuth';
 
@@ -29,6 +32,14 @@ const Admin = () => {
 
   return (
     <div>
+      <div className="fixed top-4 left-4 z-50">
+        <Link to="/">
+          <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Site
+          </Button>
+        </Link>
+      </div>
       <div className="fixed top-4 right-4 z-50">
         <button
           onClick={handleLogout}
