@@ -1,4 +1,3 @@
-
 export interface UserAccount {
   email: string;
   password: string;
@@ -36,9 +35,14 @@ class AuthService {
   }
 
   registerUser(email: string, password: string): { success: boolean; message: string } {
+    console.log(`=== REGISTERING USER: ${email} ===`);
+    
     // Check if user already exists
     const existingUsers = this.getAllUsers();
+    console.log('Existing users before registration:', existingUsers.length);
+    
     if (existingUsers.find(user => user.email === email)) {
+      console.log('User already exists');
       return { success: false, message: 'Account with this email already exists' };
     }
 
@@ -52,6 +56,8 @@ class AuthService {
       country: '',
       createdAt: new Date().toISOString()
     };
+
+    console.log('Creating new user:', newUser);
 
     // Initialize user data
     const initialUserData: UserData = {
@@ -71,15 +77,29 @@ class AuthService {
       tradingHistory: []
     };
 
-    // Save user data
-    this.saveUserData(email, initialUserData);
-    
-    // Add to users list
-    const users = this.getAllUsers();
-    users.push(newUser);
-    localStorage.setItem('registeredUsers', JSON.stringify(users));
+    try {
+      // Save user data first
+      this.saveUserData(email, initialUserData);
+      console.log('User data saved successfully');
+      
+      // Add to users list
+      const users = this.getAllUsers();
+      users.push(newUser);
+      localStorage.setItem('registeredUsers', JSON.stringify(users));
+      console.log('User added to registeredUsers list. Total users now:', users.length);
+      
+      // Verify the save worked
+      const verifyUsers = this.getAllUsers();
+      console.log('Verification - total users after save:', verifyUsers.length);
+      const verifyUser = verifyUsers.find(u => u.email === email);
+      console.log('Verification - can find new user:', !!verifyUser);
 
-    return { success: true, message: 'Account created successfully' };
+      return { success: true, message: 'Account created successfully' };
+      
+    } catch (error) {
+      console.error('Error during user registration:', error);
+      return { success: false, message: 'Failed to create account. Please try again.' };
+    }
   }
 
   loginUser(email: string, password: string, rememberMe: boolean = false): { success: boolean; message: string } {
@@ -188,8 +208,12 @@ class AuthService {
   getAllUsers(): UserAccount[] {
     try {
       const users = localStorage.getItem('registeredUsers');
-      return users ? JSON.parse(users) : [];
-    } catch {
+      console.log('Getting all users from localStorage:', users);
+      const parsedUsers = users ? JSON.parse(users) : [];
+      console.log('Parsed users:', parsedUsers);
+      return parsedUsers;
+    } catch (error) {
+      console.error('Error getting users from localStorage:', error);
       return [];
     }
   }

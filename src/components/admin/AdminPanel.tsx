@@ -25,15 +25,47 @@ const AdminPanel = () => {
   
   useEffect(() => {
     loadAllData();
+    
+    // Set up interval to refresh data every 5 seconds to catch new registrations
+    const interval = setInterval(() => {
+      loadAllData();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const loadAllData = () => {
-    setLoading(true);
-    console.log('Loading admin data...');
+    console.log('=== ADMIN PANEL: Loading all data ===');
     
     try {
-      loadUsers();
-      loadDeposits();
+      // Load users first
+      const allUsers = authService.getAllUsers();
+      console.log('Raw users from authService:', allUsers);
+      console.log('Number of users found:', allUsers.length);
+      
+      if (allUsers.length === 0) {
+        console.log('No users found in localStorage. Checking localStorage directly...');
+        const rawUsersData = localStorage.getItem('registeredUsers');
+        console.log('Raw localStorage registeredUsers data:', rawUsersData);
+        
+        // Try to parse manually to see if there's corrupted data
+        if (rawUsersData) {
+          try {
+            const parsedUsers = JSON.parse(rawUsersData);
+            console.log('Successfully parsed users:', parsedUsers);
+          } catch (parseError) {
+            console.error('Error parsing users data:', parseError);
+          }
+        }
+      }
+      
+      setUsers(allUsers);
+      
+      // Load deposits
+      loadDeposits(allUsers);
+      
+      console.log('=== ADMIN PANEL: Data loading complete ===');
+      
     } catch (error) {
       console.error('Error loading admin data:', error);
       toast({
@@ -46,23 +78,17 @@ const AdminPanel = () => {
     }
   };
 
-  const loadUsers = () => {
-    console.log('Loading users...');
-    const allUsers = authService.getAllUsers();
-    console.log('Found users:', allUsers);
-    setUsers(allUsers);
-  };
-
-  const loadDeposits = () => {
-    console.log('Loading deposits...');
-    const allUsers = authService.getAllUsers();
+  const loadDeposits = (usersList: UserAccount[]) => {
+    console.log('Loading deposits for users:', usersList.length);
     const allDeposits: DepositRecord[] = [];
     
-    allUsers.forEach(user => {
+    usersList.forEach(user => {
+      console.log(`Checking deposits for user: ${user.email}`);
       const userData = authService.getUserData(user.email);
       console.log(`User data for ${user.email}:`, userData);
       
       if (userData && userData.deposits && Array.isArray(userData.deposits)) {
+        console.log(`Found ${userData.deposits.length} deposits for ${user.email}`);
         userData.deposits.forEach((deposit: any, index: number) => {
           allDeposits.push({
             id: `${user.email}-${deposit.date || index}`,
@@ -73,10 +99,12 @@ const AdminPanel = () => {
             status: deposit.status || 'approved'
           });
         });
+      } else {
+        console.log(`No deposits found for ${user.email}`);
       }
     });
     
-    console.log('All deposits:', allDeposits);
+    console.log('Total deposits loaded:', allDeposits.length);
     setDeposits(allDeposits.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
   };
 
@@ -133,6 +161,12 @@ const AdminPanel = () => {
     }, 0);
   };
 
+  // Debug information
+  console.log('Current admin panel state:');
+  console.log('- Users:', users.length);
+  console.log('- Deposits:', deposits.length);
+  console.log('- Loading:', loading);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background p-6 flex items-center justify-center">
@@ -152,6 +186,19 @@ const AdminPanel = () => {
           onTogglePasswords={() => setShowPasswords(!showPasswords)}
           onRefresh={loadAllData}
         />
+
+        {/* Debug info for development */}
+        <div className="bg-muted p-4 rounded-lg text-sm">
+          <p><strong>Debug Info:</strong></p>
+          <p>Total Users Found: {users.length}</p>
+          <p>Total Deposits Found: {deposits.length}</p>
+          <p>Last Refresh: {new Date().toLocaleTimeString()}</p>
+          {users.length === 0 && (
+            <p className="text-orange-600 mt-2">
+              ⚠️ No users found. If you expect users to be registered, check the browser console for errors.
+            </p>
+          )}
+        </div>
 
         <AdminStats 
           users={users}
