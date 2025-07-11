@@ -26,51 +26,68 @@ const AdminPanel = () => {
   useEffect(() => {
     loadAllData();
     
-    // Set up interval to refresh data every 5 seconds to catch new registrations
+    // Set up interval to refresh data every 3 seconds for real-time updates
     const interval = setInterval(() => {
       loadAllData();
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
 
   const loadAllData = () => {
-    console.log('=== ADMIN PANEL: Loading all data ===');
+    console.log('=== ADMIN PANEL DEBUG: Starting data load ===');
+    console.log('Current localStorage keys:', Object.keys(localStorage));
+    
+    // Check what's in localStorage
+    const registeredUsersRaw = localStorage.getItem('registeredUsers');
+    console.log('Raw registeredUsers from localStorage:', registeredUsersRaw);
     
     try {
-      // Load users first
-      const allUsers = authService.getAllUsers();
-      console.log('Raw users from authService:', allUsers);
-      console.log('Number of users found:', allUsers.length);
+      // Try to get users directly from localStorage first
+      let allUsers: UserAccount[] = [];
       
-      if (allUsers.length === 0) {
-        console.log('No users found in localStorage. Checking localStorage directly...');
-        const rawUsersData = localStorage.getItem('registeredUsers');
-        console.log('Raw localStorage registeredUsers data:', rawUsersData);
-        
-        // Try to parse manually to see if there's corrupted data
-        if (rawUsersData) {
-          try {
-            const parsedUsers = JSON.parse(rawUsersData);
-            console.log('Successfully parsed users:', parsedUsers);
-          } catch (parseError) {
-            console.error('Error parsing users data:', parseError);
+      if (registeredUsersRaw) {
+        try {
+          const parsedUsers = JSON.parse(registeredUsersRaw);
+          console.log('Parsed users from localStorage:', parsedUsers);
+          
+          if (Array.isArray(parsedUsers)) {
+            allUsers = parsedUsers;
+            console.log('Successfully loaded users array:', allUsers.length, 'users');
+          } else {
+            console.log('registeredUsers is not an array:', typeof parsedUsers);
           }
+        } catch (parseError) {
+          console.error('Error parsing registeredUsers:', parseError);
         }
+      } else {
+        console.log('No registeredUsers found in localStorage');
       }
       
+      // Also try authService method as backup
+      const serviceUsers = authService.getAllUsers();
+      console.log('Users from authService:', serviceUsers);
+      
+      // Use whichever method gives us more users
+      if (serviceUsers.length > allUsers.length) {
+        allUsers = serviceUsers;
+        console.log('Using authService users instead');
+      }
+      
+      console.log('Final users array:', allUsers);
       setUsers(allUsers);
       
-      // Load deposits
+      // Load deposits for these users
       loadDeposits(allUsers);
       
-      console.log('=== ADMIN PANEL: Data loading complete ===');
+      console.log('=== ADMIN PANEL DEBUG: Data loading complete ===');
+      console.log('Total users loaded:', allUsers.length);
       
     } catch (error) {
-      console.error('Error loading admin data:', error);
+      console.error('Error in loadAllData:', error);
       toast({
         title: "Error Loading Data",
-        description: "Failed to load admin data. Please refresh the page.",
+        description: "Failed to load admin data. Check console for details.",
         variant: "destructive"
       });
     } finally {
@@ -79,32 +96,48 @@ const AdminPanel = () => {
   };
 
   const loadDeposits = (usersList: UserAccount[]) => {
+    console.log('=== LOADING DEPOSITS ===');
     console.log('Loading deposits for users:', usersList.length);
     const allDeposits: DepositRecord[] = [];
     
     usersList.forEach(user => {
       console.log(`Checking deposits for user: ${user.email}`);
-      const userData = authService.getUserData(user.email);
-      console.log(`User data for ${user.email}:`, userData);
       
-      if (userData && userData.deposits && Array.isArray(userData.deposits)) {
-        console.log(`Found ${userData.deposits.length} deposits for ${user.email}`);
-        userData.deposits.forEach((deposit: any, index: number) => {
-          allDeposits.push({
-            id: `${user.email}-${deposit.date || index}`,
-            userEmail: user.email,
-            amount: deposit.amount || 0,
-            transactionCode: deposit.transactionCode || 'N/A',
-            date: deposit.date || new Date().toISOString(),
-            status: deposit.status || 'approved'
-          });
-        });
+      // Check user data in localStorage directly
+      const userDataKey = `userData_${user.email}`;
+      const userDataRaw = localStorage.getItem(userDataKey);
+      console.log(`Raw userData for ${user.email}:`, userDataRaw);
+      
+      if (userDataRaw) {
+        try {
+          const userData = JSON.parse(userDataRaw);
+          console.log(`Parsed userData for ${user.email}:`, userData);
+          
+          if (userData && userData.deposits && Array.isArray(userData.deposits)) {
+            console.log(`Found ${userData.deposits.length} deposits for ${user.email}`);
+            userData.deposits.forEach((deposit: any, index: number) => {
+              allDeposits.push({
+                id: `${user.email}-${deposit.date || index}`,
+                userEmail: user.email,
+                amount: deposit.amount || 0,
+                transactionCode: deposit.transactionCode || 'N/A',
+                date: deposit.date || new Date().toISOString(),
+                status: deposit.status || 'approved'
+              });
+            });
+          } else {
+            console.log(`No deposits array found for ${user.email}`);
+          }
+        } catch (error) {
+          console.error(`Error parsing userData for ${user.email}:`, error);
+        }
       } else {
-        console.log(`No deposits found for ${user.email}`);
+        console.log(`No userData found for ${user.email}`);
       }
     });
     
     console.log('Total deposits loaded:', allDeposits.length);
+    console.log('All deposits:', allDeposits);
     setDeposits(allDeposits.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
   };
 
@@ -187,15 +220,16 @@ const AdminPanel = () => {
           onRefresh={loadAllData}
         />
 
-        {/* Debug info for development */}
-        <div className="bg-muted p-4 rounded-lg text-sm">
-          <p><strong>Debug Info:</strong></p>
-          <p>Total Users Found: {users.length}</p>
-          <p>Total Deposits Found: {deposits.length}</p>
-          <p>Last Refresh: {new Date().toLocaleTimeString()}</p>
+        {/* Enhanced Debug info */}
+        <div className="bg-muted p-4 rounded-lg text-sm space-y-2">
+          <p><strong>🔍 Real-time Debug Info:</strong></p>
+          <p>📊 Total Users Found: <span className="font-bold text-green-600">{users.length}</span></p>
+          <p>💰 Total Deposits Found: <span className="font-bold text-blue-600">{deposits.length}</span></p>
+          <p>🔄 Last Refresh: <span className="font-mono">{new Date().toLocaleTimeString()}</span></p>
+          <p>💾 localStorage Keys: <span className="font-mono text-xs">{Object.keys(localStorage).filter(key => key.includes('user') || key.includes('registered')).join(', ')}</span></p>
           {users.length === 0 && (
             <p className="text-orange-600 mt-2">
-              ⚠️ No users found. If you expect users to be registered, check the browser console for errors.
+              ⚠️ No users found. Register a new user to test the admin panel functionality.
             </p>
           )}
         </div>
