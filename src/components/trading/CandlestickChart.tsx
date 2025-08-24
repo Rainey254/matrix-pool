@@ -20,6 +20,7 @@ const CandlestickBar = (props: any) => {
   const { open, high, low, close } = payload;
   const isGreen = close > open;
   const color = isGreen ? 'hsl(var(--chart-1))' : 'hsl(var(--destructive))';
+  const wickColor = isGreen ? 'hsl(var(--chart-2))' : color;
   
   // Calculate positions
   const centerX = x + width / 2;
@@ -41,7 +42,7 @@ const CandlestickBar = (props: any) => {
         y1={wickTop}
         x2={centerX}
         y2={wickBottom}
-        stroke={color}
+        stroke={wickColor}
         strokeWidth={2}
       />
       {/* Open-Close body */}
