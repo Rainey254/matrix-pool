@@ -42,7 +42,7 @@ const CandlestickBar = (props: any) => {
         x2={centerX}
         y2={wickBottom}
         stroke={color}
-        strokeWidth={1}
+        strokeWidth={2}
       />
       {/* Open-Close body */}
       <rect
