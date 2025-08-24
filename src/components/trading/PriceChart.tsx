@@ -75,7 +75,7 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
         candleY,
         wickHeight,
         wickY,
-        color: isGreen ? 'hsl(var(--success))' : 'hsl(var(--success))'
+        color: isGreen ? 'hsl(var(--chart-1))' : 'hsl(var(--destructive))'
       });
     }
     
@@ -168,7 +168,7 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
               candleY: Math.max(open, close),
               wickHeight: high - low,
               wickY: high,
-              color: isGreen ? 'hsl(var(--success))' : 'hsl(var(--success))'
+              color: isGreen ? 'hsl(var(--chart-1))' : 'hsl(var(--destructive))'
             };
             
             return [...prevCandles.slice(1), newCandle];
