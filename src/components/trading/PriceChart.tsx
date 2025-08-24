@@ -255,7 +255,7 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
             <Line 
               type="monotone" 
               dataKey="price" 
-              stroke="hsl(var(--success))" 
+              stroke={priceDirection === 'up' ? 'hsl(var(--success))' : priceDirection === 'down' ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))'} 
               strokeWidth={2}
               dot={false}
             />
