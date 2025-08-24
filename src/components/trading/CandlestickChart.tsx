@@ -19,8 +19,8 @@ const CandlestickBar = (props: any) => {
   
   const { open, high, low, close } = payload;
   const isGreen = close > open;
-  const color = isGreen ? 'hsl(var(--chart-1))' : 'hsl(var(--destructive))';
-  const wickColor = isGreen ? 'hsl(var(--chart-2))' : color;
+  const color = isGreen ? 'hsl(280 100% 70%)' : 'hsl(var(--destructive))';
+  const wickColor = isGreen ? 'hsl(280 100% 50%)' : color;
   
   // Calculate positions
   const centerX = x + width / 2;
