@@ -42,7 +42,8 @@ const CandlestickBar = (props: any) => {
         x2={centerX}
         y2={wickBottom}
         stroke={color}
-        strokeWidth={1}
+        strokeWidth={color.includes('chart-1') ? 2 : 1}
+        opacity={color.includes('chart-1') ? 0.9 : 0.8}
       />
       {/* Open-Close body */}
       <rect
@@ -53,6 +54,7 @@ const CandlestickBar = (props: any) => {
         fill={color}
         stroke={color}
         strokeWidth={1}
+        opacity={0.8}
       />
     </g>
   );
