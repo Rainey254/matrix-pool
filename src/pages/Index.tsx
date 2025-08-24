@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Users, ChartLine, Smartphone, Settings } from "lucide-react";
 import AuthModal from "@/components/auth/AuthModal";
-import TradingDashboard from "@/components/trading/TradingDashboard";
+import { NewTradingDashboard } from "@/components/trading/NewTradingDashboard";
 import { authService } from "@/services/authService";
 
 const Index = () => {
@@ -30,7 +30,7 @@ const Index = () => {
   };
 
   if (isLoggedIn) {
-    return <TradingDashboard />;
+    return <NewTradingDashboard />;
   }
 
   return (
