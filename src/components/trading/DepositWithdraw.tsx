@@ -251,15 +251,16 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="h-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <h2 className="text-2xl font-bold text-white">Deposit & Withdraw</h2>
         <Button variant="ghost" onClick={onClose} className="text-gray-400">
           ✕
         </Button>
       </div>
 
-      <Tabs defaultValue="deposit" className="w-full">
+      <div className="flex-1 overflow-y-auto">
+        <Tabs defaultValue="deposit" className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-slate-700">
           <TabsTrigger value="deposit" className="text-white">Deposit</TabsTrigger>
           <TabsTrigger value="withdraw" className="text-white">Withdraw</TabsTrigger>
@@ -577,6 +578,7 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
           </Tabs>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 };
