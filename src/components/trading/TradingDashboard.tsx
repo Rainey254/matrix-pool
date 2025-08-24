@@ -217,7 +217,11 @@ const TradingDashboard = () => {
                   </Button>
                 </SheetTrigger>
                 <SheetContent className="bg-slate-900 border-slate-700 w-full max-w-4xl">
-                  <TradingHistory onClose={closeSheet} />
+                  <TradingHistory 
+                    onClose={closeSheet} 
+                    accountType={accountType} 
+                    userId={currentUserEmail || undefined} 
+                  />
                 </SheetContent>
               </Sheet>
 

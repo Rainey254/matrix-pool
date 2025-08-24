@@ -1,17 +1,22 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { History } from "lucide-react";
+import { History, Wifi, WifiOff } from "lucide-react";
+import { useRealtimeTransactions } from "@/hooks/useRealtimeTransactions";
 
 interface TradingHistoryProps {
   onClose: () => void;
+  accountType?: 'demo' | 'real';
+  userId?: string;
 }
 
-const TradingHistory = ({ onClose }: TradingHistoryProps) => {
+const TradingHistory = ({ onClose, accountType = 'demo', userId }: TradingHistoryProps) => {
+  const { transactions, isConnected, addTransaction } = useRealtimeTransactions(accountType, userId);
+  
   const [tradeHistory] = useState([
     {
       id: "1",
@@ -70,33 +75,6 @@ const TradingHistory = ({ onClose }: TradingHistoryProps) => {
     }
   ]);
 
-  const [transactionHistory] = useState([
-    {
-      id: "1",
-      type: "deposit",
-      method: "Bitcoin",
-      amount: 500,
-      status: "completed",
-      timestamp: "2025-01-06 12:00:00"
-    },
-    {
-      id: "2",
-      type: "withdraw",
-      method: "Ethereum",
-      amount: 200,
-      status: "pending",
-      timestamp: "2025-01-06 11:30:00"
-    },
-    {
-      id: "3",
-      type: "deposit",
-      method: "M-Pesa",
-      amount: 100,
-      status: "completed",
-      timestamp: "2025-01-06 10:15:00"
-    }
-  ]);
-
   const totalPnL = tradeHistory.reduce((sum, trade) => sum + trade.payout, 0);
   const winRate = (tradeHistory.filter(trade => trade.result === "win").length / tradeHistory.length) * 100;
 
@@ -106,6 +84,16 @@ const TradingHistory = ({ onClose }: TradingHistoryProps) => {
         <h2 className="text-2xl font-bold text-white flex items-center gap-2">
           <History className="h-6 w-6" />
           Mine History
+          <div className="flex items-center gap-1 ml-2">
+            {isConnected ? (
+              <Wifi className="h-4 w-4 text-green-400" />
+            ) : (
+              <WifiOff className="h-4 w-4 text-red-400" />
+            )}
+            <span className="text-xs text-gray-400">
+              {isConnected ? 'Live' : 'Offline'}
+            </span>
+          </div>
         </h2>
         <Button variant="ghost" onClick={onClose} className="text-gray-400">
           ✕
@@ -200,7 +188,17 @@ const TradingHistory = ({ onClose }: TradingHistoryProps) => {
           <TabsContent value="transactions">
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-white">Mine History</CardTitle>
+                <CardTitle className="text-white flex items-center justify-between">
+                  Mine History
+                  <div className="flex items-center gap-2">
+                    <Badge className={`text-xs ${isConnected ? 'bg-green-600' : 'bg-red-600'}`}>
+                      {isConnected ? 'Real-time' : 'Offline'}
+                    </Badge>
+                    <Badge className="bg-blue-600 text-xs">
+                      {accountType === 'demo' ? 'Demo' : 'Live'} Account
+                    </Badge>
+                  </div>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -213,25 +211,39 @@ const TradingHistory = ({ onClose }: TradingHistoryProps) => {
                       <TableHead className="text-gray-400">Time</TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody>
-                    {transactionHistory.map((transaction) => (
-                      <TableRow key={transaction.id}>
-                        <TableCell>
-                          <Badge className={transaction.type === 'deposit' ? 'bg-green-600' : 'bg-blue-600'}>
-                            {transaction.type.toUpperCase()}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-white">{transaction.method}</TableCell>
-                        <TableCell className="text-white">${transaction.amount}</TableCell>
-                        <TableCell>
-                          <Badge className={transaction.status === 'completed' ? 'bg-green-600' : 'bg-yellow-600'}>
-                            {transaction.status.toUpperCase()}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-gray-400 text-sm">{transaction.timestamp}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
+                <TableBody>
+                  {transactions
+                    .filter(t => t.type !== 'trade')
+                    .map((transaction) => (
+                    <TableRow key={transaction.id} className={transaction.timestamp > new Date(Date.now() - 10000).toISOString() ? 'animate-pulse bg-green-500/10' : ''}>
+                      <TableCell>
+                        <Badge className={transaction.type === 'deposit' ? 'bg-green-600' : 'bg-blue-600'}>
+                          {transaction.type.toUpperCase()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-white">{transaction.method || 'N/A'}</TableCell>
+                      <TableCell className="text-white">${transaction.amount}</TableCell>
+                      <TableCell>
+                        <Badge className={
+                          transaction.status === 'completed' ? 'bg-green-600' : 
+                          transaction.status === 'pending' ? 'bg-yellow-600' : 'bg-red-600'
+                        }>
+                          {transaction.status.toUpperCase()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-400 text-sm">
+                        {new Date(transaction.timestamp).toLocaleString()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {transactions.filter(t => t.type !== 'trade').length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-gray-400 py-8">
+                        No transactions yet. Start trading to see your history here.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
                 </Table>
               </CardContent>
             </Card>

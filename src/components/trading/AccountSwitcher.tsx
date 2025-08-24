@@ -15,17 +15,24 @@ const AccountSwitcher = ({ accountType, onAccountChange, balance, realBalance }:
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="border-purple-600 text-white hover:bg-purple-700 bg-purple-600/20">
-          <div className="flex items-center space-x-2">
-            <div className="text-left">
-              <div className="text-sm font-medium">${balance.toLocaleString()}</div>
-              <div className="text-xs text-purple-200 capitalize">{accountType} Account</div>
+        <Button 
+          variant="outline" 
+          className="border-purple-600 text-white hover:bg-purple-700 bg-purple-600/20 min-w-[140px] md:min-w-[180px] h-auto px-3 py-2"
+        >
+          <div className="flex items-center justify-between w-full gap-2">
+            <div className="text-left min-w-0 flex-1">
+              <div className="text-sm font-medium truncate">${balance.toLocaleString()}</div>
+              <div className="text-xs text-purple-200 capitalize truncate">{accountType} Account</div>
             </div>
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-4 w-4 flex-shrink-0" />
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 bg-slate-800 border-slate-700">
+      <PopoverContent 
+        className="w-80 bg-slate-800 border-slate-700 z-50" 
+        align="start"
+        sideOffset={5}
+      >
         <div className="space-y-4">
           <h4 className="font-semibold text-white">Switch Account</h4>
           
