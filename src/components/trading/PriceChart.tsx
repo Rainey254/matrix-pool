@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart } from "recharts";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CandlestickChart from "./CandlestickChart";
 
@@ -37,7 +37,7 @@ interface CandleData {
 }
 
 const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps) => {
-  const [priceData, setPriceData] = useState<Array<{time: string, price: number, direction: 'up' | 'down' | 'neutral'}>>([]);
+  const [priceData, setPriceData] = useState<Array<{time: string, price: number}>>([]);
   const [candleData, setCandleData] = useState<CandleData[]>([]);
   const [currentPrice, setCurrentPrice] = useState(1000);
   const [priceDirection, setPriceDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
@@ -103,14 +103,9 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
       priceHistory.push(formattedPrice);
       
       if (i >= 50) {
-        const direction: 'up' | 'down' | 'neutral' = i > 50 ? 
-          (formattedPrice > priceHistory[i-1] ? 'up' : 
-           formattedPrice < priceHistory[i-1] ? 'down' : 'neutral') : 'neutral';
-        
         initialData.push({
           time: new Date(Date.now() - (99 - i) * 1000).toLocaleTimeString(),
-          price: formattedPrice,
-          direction
+          price: formattedPrice
         });
       }
     }
@@ -143,14 +138,9 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
         else setPriceDirection('neutral');
         
         setPriceData(prevData => {
-          const direction: 'up' | 'down' | 'neutral' = 
-            finalPrice > prev ? 'up' : 
-            finalPrice < prev ? 'down' : 'neutral';
-            
           const newData = [...prevData.slice(1), {
             time: new Date().toLocaleTimeString(),
-            price: finalPrice,
-            direction
+            price: finalPrice
           }];
           latestPriceData = newData;
           return newData;
@@ -270,36 +260,6 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
               dot={false}
             />
           </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Movement Line Chart */}
-      <div className="h-32 sm:h-40">
-        <div className="text-sm font-medium text-muted-foreground mb-2">Up/Down Movement Chart</div>
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={priceData}>
-            <XAxis 
-              dataKey="time" 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }}
-              interval="preserveStartEnd"
-            />
-            <YAxis 
-              domain={['dataMin - 2', 'dataMax + 2']}
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }}
-              width={50}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="price" 
-              stroke="hsl(var(--chart-1))"
-              strokeWidth={2}
-              dot={{ r: 2, fill: "hsl(var(--chart-1))" }}
-            />
-          </ComposedChart>
         </ResponsiveContainer>
       </div>
 
