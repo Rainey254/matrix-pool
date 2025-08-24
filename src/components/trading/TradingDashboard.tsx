@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +12,8 @@ import UserProfile from "./UserProfile";
 import TradingHistory from "./TradingHistory";
 import { toast } from "@/hooks/use-toast";
 import { authService } from "@/services/authService";
+import MobileMenu from "./MobileMenu";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const TradingDashboard = () => {
   const [accountType, setAccountType] = useState<'demo' | 'real'>('demo');
@@ -26,6 +26,7 @@ const TradingDashboard = () => {
   const [userFirstName, setUserFirstName] = useState<string>('');
   const [winRate, setWinRate] = useState('~35%');
   const [winRateColor, setWinRateColor] = useState('text-red-400');
+  const isMobile = useIsMobile();
 
   // Dynamic win rate that changes every 20 seconds
   useEffect(() => {
@@ -153,98 +154,118 @@ const TradingDashboard = () => {
               realBalance={realBalance}
             />
           </div>
-          <div className="flex items-center gap-4">
-            {userFirstName && (
-              <span className="text-sm text-gray-400">
-                Welcome, {userFirstName}
-              </span>
-            )}
-            <Badge variant="outline" className="text-green-400 border-green-400">
-              {accountType === 'demo' ? 'Demo Account' : 'Real Account'}
-            </Badge>
-            
-            {/* Action Buttons - Updated with more visible colors */}
-            <Sheet open={activeSheet === 'deposit'} onOpenChange={(open) => !open && setActiveSheet(null)}>
-              <SheetTrigger asChild>
-                <Button
-                  size="sm"
-                  onClick={handleDepositClick}
-                  className="bg-blue-600 hover:bg-blue-700 text-white border-0"
-                >
-                  <Wallet className="h-4 w-4 mr-2" />
-                  Deposit
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="bg-slate-900 border-slate-700 w-full max-w-2xl">
-                <DepositWithdraw 
-                  balance={currentBalance}
-                  onBalanceChange={handleBalanceChange}
-                  onClose={closeSheet}
-                  accountType={accountType}
-                  onMpesaDeposit={(amount) => {
-                    // Handle M-Pesa deposit with 3-minute delay
-                    toast({
-                      title: "M-Pesa Deposit Processing",
-                      description: `Your deposit of $${amount} is being processed. It will reflect in your account within 3 minutes.`,
-                      duration: 5000,
-                    });
-                    
-                    setTimeout(() => {
-                      setRealBalance(prev => prev + amount);
+          
+          {/* Desktop Action Buttons - Hide on mobile */}
+          {!isMobile && (
+            <div className="flex items-center gap-4">
+              {userFirstName && (
+                <span className="text-sm text-gray-400">
+                  Welcome, {userFirstName}
+                </span>
+              )}
+              <Badge variant="outline" className="text-green-400 border-green-400">
+                {accountType === 'demo' ? 'Demo Account' : 'Real Account'}
+              </Badge>
+              
+              {/* Action Buttons */}
+              <Sheet open={activeSheet === 'deposit'} onOpenChange={(open) => !open && setActiveSheet(null)}>
+                <SheetTrigger asChild>
+                  <Button
+                    size="sm"
+                    onClick={handleDepositClick}
+                    className="bg-blue-600 hover:bg-blue-700 text-white border-0"
+                  >
+                    <Wallet className="h-4 w-4 mr-2" />
+                    Deposit
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="bg-slate-900 border-slate-700 w-full max-w-2xl">
+                  <DepositWithdraw 
+                    balance={currentBalance}
+                    onBalanceChange={handleBalanceChange}
+                    onClose={closeSheet}
+                    accountType={accountType}
+                    onMpesaDeposit={(amount) => {
+                      // Handle M-Pesa deposit with 3-minute delay
                       toast({
-                        title: "Deposit Successful",
-                        description: `$${amount} has been added to your real account balance.`,
+                        title: "M-Pesa Deposit Processing",
+                        description: `Your deposit of $${amount} is being processed. It will reflect in your account within 3 minutes.`,
+                        duration: 5000,
                       });
-                    }, 3 * 60 * 1000); // 3 minutes delay
-                  }}
-                />
-              </SheetContent>
-            </Sheet>
+                      
+                      setTimeout(() => {
+                        setRealBalance(prev => prev + amount);
+                        toast({
+                          title: "Deposit Successful",
+                          description: `$${amount} has been added to your real account balance.`,
+                        });
+                      }, 3 * 60 * 1000); // 3 minutes delay
+                    }}
+                  />
+                </SheetContent>
+              </Sheet>
 
-            <Sheet open={activeSheet === 'history'} onOpenChange={(open) => !open && setActiveSheet(null)}>
-              <SheetTrigger asChild>
-                <Button
-                  size="sm"
-                  onClick={() => setActiveSheet('history')}
-                  className="bg-orange-600 hover:bg-orange-700 text-white border-0"
-                >
-                  <History className="h-4 w-4 mr-2" />
-                  History
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="bg-slate-900 border-slate-700 w-full max-w-4xl">
-                <TradingHistory onClose={closeSheet} />
-              </SheetContent>
-            </Sheet>
+              <Sheet open={activeSheet === 'history'} onOpenChange={(open) => !open && setActiveSheet(null)}>
+                <SheetTrigger asChild>
+                  <Button
+                    size="sm"
+                    onClick={() => setActiveSheet('history')}
+                    className="bg-orange-600 hover:bg-orange-700 text-white border-0"
+                  >
+                    <History className="h-4 w-4 mr-2" />
+                    History
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="bg-slate-900 border-slate-700 w-full max-w-4xl">
+                  <TradingHistory onClose={closeSheet} />
+                </SheetContent>
+              </Sheet>
 
-            <Sheet open={activeSheet === 'profile'} onOpenChange={(open) => !open && setActiveSheet(null)}>
-              <SheetTrigger asChild>
-                <Button
-                  size="sm"
-                  onClick={() => setActiveSheet('profile')}
-                  className="bg-cyan-600 hover:bg-cyan-700 text-white border-0"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Profile
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="bg-slate-900 border-slate-700 w-full max-w-2xl">
-                <UserProfile onClose={closeSheet} onProfileUpdate={handleProfileUpdate} />
-              </SheetContent>
-            </Sheet>
+              <Sheet open={activeSheet === 'profile'} onOpenChange={(open) => !open && setActiveSheet(null)}>
+                <SheetTrigger asChild>
+                  <Button
+                    size="sm"
+                    onClick={() => setActiveSheet('profile')}
+                    className="bg-cyan-600 hover:bg-cyan-700 text-white border-0"
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    Profile
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="bg-slate-900 border-slate-700 w-full max-w-2xl">
+                  <UserProfile onClose={closeSheet} onProfileUpdate={handleProfileUpdate} />
+                </SheetContent>
+              </Sheet>
 
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleLogout}
-              className="text-red-400 hover:text-red-300 hover:bg-red-600/10"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
-          </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="text-red-400 hover:text-red-300 hover:bg-red-600/10"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
+          )}
+
+          {/* Mobile Badge - Show on mobile */}
+          {isMobile && (
+            <Badge variant="outline" className="text-green-400 border-green-400 text-xs">
+              {accountType === 'demo' ? 'Demo' : 'Real'}
+            </Badge>
+          )}
         </div>
       </header>
+
+      {/* Mobile Menu */}
+      <MobileMenu
+        onDepositClick={handleDepositClick}
+        onHistoryClick={() => setActiveSheet('history')}
+        onProfileClick={() => setActiveSheet('profile')}
+        onLogoutClick={handleLogout}
+        userFirstName={userFirstName}
+      />
 
       <div className="container mx-auto px-4 py-6">
         <div className="grid lg:grid-cols-3 gap-6">
