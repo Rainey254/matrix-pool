@@ -51,7 +51,7 @@ const LiveExchangeRate = () => {
         <span className="text-gray-400 text-sm">Live Exchange Rate:</span>
         <div className={`flex items-center gap-1 font-mono ${getTrendColor()}`}>
           <span className="text-sm">{getTrendIcon()}</span>
-          <span className="font-semibold">
+          <span className="font-medium text-sm">
             USD 1 : KES {rate}
           </span>
         </div>
