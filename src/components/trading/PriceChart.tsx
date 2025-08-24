@@ -255,7 +255,7 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
             <Line 
               type="monotone" 
               dataKey="price" 
-              stroke="hsl(var(--primary))" 
+              stroke="hsl(var(--success))" 
               strokeWidth={2}
               dot={false}
             />

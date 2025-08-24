@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/hooks/use-toast";
 import { Wallet, Smartphone, Copy } from "lucide-react";
 import { playMT5NotificationSound, playWithdrawalSound } from "@/utils/soundUtils";
+import LiveExchangeRate from "./LiveExchangeRate";
 
 interface DepositWithdrawProps {
   balance: number;
@@ -285,6 +286,7 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
                   <CardTitle className="text-white">M-Pesa Deposit</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <LiveExchangeRate />
                   <div className="p-4 bg-slate-700 rounded-lg">
                     <p className="text-sm text-gray-400 mb-2">M-Pesa Payment Details:</p>
                     <div className="space-y-2">
