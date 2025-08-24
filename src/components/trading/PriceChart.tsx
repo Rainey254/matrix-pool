@@ -75,7 +75,7 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
         candleY,
         wickHeight,
         wickY,
-        color: isGreen ? 'hsl(var(--success))' : 'hsl(var(--destructive))'
+        color: isGreen ? 'hsl(var(--success))' : 'hsl(var(--success))'
       });
     }
     
@@ -168,7 +168,7 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
               candleY: Math.max(open, close),
               wickHeight: high - low,
               wickY: high,
-              color: isGreen ? 'hsl(var(--success))' : 'hsl(var(--destructive))'
+              color: isGreen ? 'hsl(var(--success))' : 'hsl(var(--success))'
             };
             
             return [...prevCandles.slice(1), newCandle];
@@ -255,7 +255,7 @@ const PriceChart = ({ selectedInstrument, onInstrumentChange }: PriceChartProps)
             <Line 
               type="monotone" 
               dataKey="price" 
-              stroke={priceDirection === 'up' ? 'hsl(var(--success))' : priceDirection === 'down' ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))'} 
+              stroke="hsl(var(--primary))" 
               strokeWidth={2}
               dot={false}
             />
