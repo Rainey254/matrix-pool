@@ -293,11 +293,11 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
                       <div className="flex justify-between items-center">
                         <span className="text-gray-400">Paybill:</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-mono">529901</span>
+                          <span className="text-white font-mono">714777</span>
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => copyToClipboard("529901", "Paybill number")}
+                            onClick={() => copyToClipboard("714777", "Paybill number")}
                             className="h-6 w-6 p-0 text-gray-400 hover:text-white"
                           >
                             <Copy className="h-3 w-3" />
@@ -307,11 +307,11 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
                       <div className="flex justify-between items-center">
                         <span className="text-gray-400">Account No:</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-mono">2092023892002</span>
+                          <span className="text-white font-mono">440200253591</span>
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => copyToClipboard("2092023892002", "Account number")}
+                            onClick={() => copyToClipboard("440200253591", "Account number")}
                             className="h-6 w-6 p-0 text-gray-400 hover:text-white"
                           >
                             <Copy className="h-3 w-3" />
