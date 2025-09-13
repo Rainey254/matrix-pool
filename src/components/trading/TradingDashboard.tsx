@@ -10,6 +10,7 @@ import PriceChart from "./PriceChart";
 import DepositWithdraw from "./DepositWithdraw";
 import UserProfile from "./UserProfile";
 import TradingHistory from "./TradingHistory";
+import { TermsAndConditions } from "@/components/legal/TermsAndConditions";
 import { toast } from "@/hooks/use-toast";
 import { authService } from "@/services/authService";
 import MobileMenu from "./MobileMenu";
@@ -241,6 +242,8 @@ const TradingDashboard = () => {
                 </SheetContent>
               </Sheet>
 
+              <TermsAndConditions className="text-gray-400 hover:text-white hover:bg-slate-700" />
+              
               <Button
                 variant="ghost"
                 size="sm"
