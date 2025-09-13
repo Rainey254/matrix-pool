@@ -44,7 +44,6 @@ const Index = () => {
             <span className="text-2xl font-bold text-white">Matrix-pool</span>
           </div>
           <div className="flex gap-4 items-center">
-            <TermsAndConditions className="text-white hover:bg-white/10" />
             <Button variant="ghost" onClick={() => openAuth('login')} className="text-white hover:bg-white/10">
               Login
             </Button>
@@ -153,6 +152,9 @@ const Index = () => {
             Create Free Account
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
+          <div className="mt-4">
+            <TermsAndConditions className="text-white hover:bg-white/10" />
+          </div>
         </div>
       </section>
 
