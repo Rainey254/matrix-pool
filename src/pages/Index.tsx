@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Users, ChartLine, Smartphone, Settings } from "lucide-react";
 import AuthModal from "@/components/auth/AuthModal";
 import TradingDashboard from "@/components/trading/TradingDashboard";
+import { TermsAndConditions } from "@/components/legal/TermsAndConditions";
 import { authService } from "@/services/authService";
 
 const Index = () => {
@@ -43,6 +44,7 @@ const Index = () => {
             <span className="text-2xl font-bold text-white">Matrix-pool</span>
           </div>
           <div className="flex gap-4 items-center">
+            <TermsAndConditions className="text-white hover:bg-white/10" />
             <Button variant="ghost" onClick={() => openAuth('login')} className="text-white hover:bg-white/10">
               Login
             </Button>

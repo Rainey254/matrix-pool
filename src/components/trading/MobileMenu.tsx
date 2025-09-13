@@ -102,20 +102,6 @@ const MobileMenu = ({
               Profile & Settings
             </Button>
 
-            {/* Terms & Conditions */}
-            <div className="w-full">
-              <TermsAndConditions 
-                trigger={
-                  <Button className="w-full h-12 bg-slate-600 hover:bg-slate-700 text-white rounded-xl flex items-center justify-start px-4 text-sm font-medium shadow-lg">
-                    <div className="h-8 w-8 bg-slate-500 rounded-full flex items-center justify-center mr-3">
-                      <Settings className="h-4 w-4" />
-                    </div>
-                    Terms & Conditions
-                  </Button>
-                }
-              />
-            </div>
-
             {/* Logout Button */}
             <Button
               onClick={() => handleAction(onLogoutClick)}

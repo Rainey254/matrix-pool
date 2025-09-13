@@ -55,7 +55,10 @@ export const TermsAndConditions = ({ trigger, className }: TermsAndConditionsPro
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold mb-3">4. Deposits and Withdrawals</h3>
+              <h3 className="text-lg font-semibold mb-3">8. Deposits and Withdrawals</h3>
+              <p className="text-muted-foreground leading-relaxed mb-2">
+                <strong>Withdrawal Eligibility:</strong> Only active accounts can make withdrawals. Inactive accounts are not permitted to process withdrawal requests.
+              </p>
               <p className="text-muted-foreground leading-relaxed">
                 All deposits and withdrawals are processed through secure payment methods including M-Pesa. 
                 Processing times may vary depending on the payment method selected. Minimum deposit amounts apply.
@@ -113,7 +116,18 @@ export const TermsAndConditions = ({ trigger, className }: TermsAndConditionsPro
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold mb-3">10. Modification of Terms</h3>
+              <h3 className="text-lg font-semibold mb-3">10. Deposits and Withdrawals Policy</h3>
+              <p className="text-muted-foreground leading-relaxed mb-2">
+                <strong>Important:</strong> Only active accounts are permitted to make withdrawals. Inactive accounts cannot process withdrawal requests.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                All deposits and withdrawals are processed through secure payment methods including M-Pesa. 
+                Processing times may vary depending on the payment method selected. Minimum deposit amounts apply.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-lg font-semibold mb-3">11. Modification of Terms</h3>
               <p className="text-muted-foreground leading-relaxed">
                 We reserve the right to modify these terms and conditions at any time. Users will be notified of 
                 significant changes, and continued use of the platform constitutes acceptance of the modified terms.
@@ -121,19 +135,12 @@ export const TermsAndConditions = ({ trigger, className }: TermsAndConditionsPro
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold mb-3">11. Contact Information</h3>
+              <h3 className="text-lg font-semibold mb-3">12. Contact Information</h3>
               <p className="text-muted-foreground leading-relaxed">
                 If you have any questions about these Terms and Conditions, please contact our support team through 
                 the platform's help section or customer service channels.
               </p>
             </section>
-
-            <div className="mt-8 p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground">
-                <strong>Last Updated:</strong> {new Date().toLocaleDateString()}<br />
-                <strong>Effective Date:</strong> {new Date().toLocaleDateString()}
-              </p>
-            </div>
           </div>
         </ScrollArea>
       </DialogContent>

@@ -242,8 +242,6 @@ const TradingDashboard = () => {
                 </SheetContent>
               </Sheet>
 
-              <TermsAndConditions className="text-gray-400 hover:text-white hover:bg-slate-700" />
-              
               <Button
                 variant="ghost"
                 size="sm"
