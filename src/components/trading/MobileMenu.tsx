@@ -36,7 +36,7 @@ const MobileMenu = ({
       <SheetTrigger asChild>
         <Button 
           size="icon"
-          className="fixed top-16 right-4 z-50 h-10 w-10 rounded-full bg-purple-600 hover:bg-purple-700 shadow-lg border-2 border-purple-400"
+          className="fixed top-20 right-4 z-[9999] h-12 w-12 rounded-full bg-purple-600 hover:bg-purple-700 shadow-xl border-2 border-purple-400 animate-pulse"
         >
           <Menu className="h-5 w-5 text-white" />
         </Button>
