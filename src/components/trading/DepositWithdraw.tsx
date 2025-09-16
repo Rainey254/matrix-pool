@@ -268,14 +268,14 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
         </TabsList>
 
         <TabsContent value="deposit" className="space-y-4">
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="flex justify-end mb-4">
             <Button 
               onClick={() => window.open('https://paystack.shop/pay/matrix-pool', '_blank')}
-              className="bg-blue-600 hover:bg-blue-700 text-white h-12"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-sm"
+              size="sm"
             >
               Auto Pay
             </Button>
-            <div></div>
           </div>
           
           <div className="mb-4">
@@ -475,14 +475,14 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
         </TabsContent>
 
         <TabsContent value="withdraw">
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="flex justify-end mb-4">
             <Button 
               onClick={() => window.open('https://paystack.shop/pay/matrix-pool', '_blank')}
-              className="bg-blue-600 hover:bg-blue-700 text-white h-12"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-sm"
+              size="sm"
             >
               Auto Pay
             </Button>
-            <div></div>
           </div>
           
           <div className="mb-4">
