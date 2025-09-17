@@ -268,20 +268,6 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
         </TabsList>
 
         <TabsContent value="deposit" className="space-y-4">
-          <div className="flex justify-center mb-4">
-            <Button 
-              onClick={() => window.open('https://paystack.shop/pay/matrix-pool', '_blank')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-sm"
-              size="sm"
-            >
-              Automatic deposit
-            </Button>
-          </div>
-          
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Manual Pay</h3>
-          </div>
-          
           <Tabs defaultValue="mobile" className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-slate-600">
               <TabsTrigger value="mobile" className="text-white">
@@ -475,25 +461,6 @@ const DepositWithdraw = ({ balance, onBalanceChange, onClose, accountType, onMpe
         </TabsContent>
 
         <TabsContent value="withdraw">
-          <div className="flex justify-center mb-4">
-            <Button 
-              onClick={() => window.open('https://paystack.shop/pay/matrix-pool', '_blank')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-sm"
-              size="sm"
-            >
-              Automatic deposit
-            </Button>
-          </div>
-          
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Manual Pay</h3>
-            <div className="p-3 bg-yellow-900 rounded-lg mb-4">
-              <p className="text-yellow-200 text-sm">
-                ⚠️ Only active accounts can make withdrawals. Inactive accounts are not eligible for withdrawals.
-              </p>
-            </div>
-          </div>
-          
           <Tabs defaultValue="mpesa" className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-slate-600">
               <TabsTrigger value="mpesa" className="text-white">
